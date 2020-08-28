@@ -42,7 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // querySelector('input[name="pwd"]')
   toyForm.addEventListener('submit', e => {
     e.preventDefault()
     fetch('http://localhost:3000/toys', {
@@ -58,7 +57,10 @@ document.addEventListener("DOMContentLoaded", () => {
       })
     })
     .then(response => response.json())
-    // .then(data => sendData(data))
+    // .then(data => {
+      
+    // })
+    .then(data => sendData(data))
     
     toyForm.reset()
     sendData()
@@ -68,9 +70,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function clickHandler() {
     document.addEventListener('click', function(e){
       if(e.target.matches(".like-btn")) {
-        // const button = e.target
         const cardId = e.target.parentNode.dataset.id
-        const likes = parseInt(e.target.previousElementSibling.textContent.split(' ')[0])
+        const currentLikes = parseInt(e.target.previousElementSibling.textContent.split(' ')[0])
+        const likes = currentLikes + 1
         fetch(`http://localhost:3000/toys/${cardId}`, {
           method: 'PATCH',
           headers: {
@@ -78,11 +80,19 @@ document.addEventListener("DOMContentLoaded", () => {
             "Accept": "application/json"
           },
           body: JSON.stringify({
-          likes: likes + 1
+          likes: likes
           })
         })
-        // .then(response => response.json())
-        location.reload()
+        .then( response => response.json())
+        .then(obj => {
+          const card = document.querySelector(`[data-id="${obj.id}"]`)
+          const x = card.querySelector('p')
+          const newLike = parseInt(x.innerText.split(' ')[0]) + 1
+          x.innerText = `${newLike} Likes`
+          // debugger;
+          // console.log(button)
+        } )
+        // location.reload()
       }
     })
   }
